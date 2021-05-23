@@ -28,7 +28,7 @@ Desafio de produto financeiro
 - Docker: 20.10.5
 - Docker-compose: 1.28.5
 - PHP : 7.3.15
-- Laravel : 8.16.1
+- Laravel : 8.42.1
 
 ## Configuração inicial
 
