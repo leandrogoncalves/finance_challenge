@@ -18,6 +18,34 @@ use Illuminate\Support\Facades\Log;
  */
 class UserController extends Controller
 {
+
+    /**
+     * @OA\Info(
+     *      version="1.0.0",
+     *      title="Finance Challenge API",
+     *      description="Api to perfirm financial transfers between user accounts",
+     *      @OA\Contact(
+     *          email="contato.leandrogoncalves@gmail.com"
+     *      ),
+     *      @OA\License(
+     *          name="Apache 2.0",
+     *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+     *      )
+     * )
+     *
+     * @OA\Server(
+     *      url="http://localhost:8081",
+     *      description="API Server"
+     * )
+
+     *
+     * @OA\Tag(
+     *     name="Users",
+     *     description="API Endpoints of Users"
+     * )
+     */
+
+
     /**
      * @var UserRepositoryInterface
      */
@@ -32,6 +60,25 @@ class UserController extends Controller
         $this->userRepository = $repository;
     }
 
+
+    /**
+     * @OA\Get(
+     *      path="/api/v1/users",
+     *      operationId="getUsersList",
+     *      tags={"Users"},
+     *      summary="Get list of users",
+     *      description="Returns list of users",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/UserCollection")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Error"
+     *      )
+     *   )
+     */
 
     /**
      * Display a listing of the resource.
@@ -53,6 +100,29 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *      path="/api/v1/users",
+     *      operationId="storeUser",
+     *      tags={"Users"},
+     *      summary="Store new user",
+     *      description="Returns user data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/UserRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *       ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Error"
+     *      )
+     * )
+     */
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\UserRequest  $request
@@ -71,6 +141,38 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * @OA\Get(
+     *      path="/api/v1/users/{id}",
+     *      operationId="getUserById",
+     *      tags={"Users"},
+     *      summary="Get user information",
+     *      description="Returns user data",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="User id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Error"
+     *      )
+     * )
+     */
 
     /**
      * Display the specified resource.
@@ -97,6 +199,42 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Put(
+     *      path="/api/v1/users/{id}",
+     *      operationId="updateUsers",
+     *      tags={"Users"},
+     *      summary="Update existing user",
+     *      description="Returns updated user data",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Users id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/UserRequest")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Error"
+     *      )
+     * )
+     */
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -120,6 +258,39 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+
+    /**
+     * @OA\Delete(
+     *      path="/api/v1/users/{id}",
+     *      operationId="deleteUser",
+     *      tags={"Users"},
+     *      summary="Delete existing user",
+     *      description="Deletes a record and returns content",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="User id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Error"
+     *      )
+     * )
+     */
 
     /**
      * Remove the specified resource from storage.

@@ -174,6 +174,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
 
     ],
 
@@ -227,6 +228,43 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+    ],
+
+
+    'debug_blacklist' => [
+        '_ENV' => [
+            'APP_KEY',
+            'DB_RH_PASSWORD',
+            'MAIL_FROM_NAME',
+            'MAIL_PASSWORD',
+            'SMTP_HOST',
+            'SMTP_FROM',
+            'DB_HOST',
+            'DB_PORT',
+            'DB_DATABASE',
+            'DB_USERNAME',
+            'DB_PASSWORD',
+            'REDIS_HOST',
+            'REDIS_PASSWORD',
+        ],
+
+        '_SERVER' => [
+            'APP_KEY',
+            'APP_KEY',
+            'JWT_SECRET',
+
+            'MAIL_FROM_NAME',
+            'MAIL_PASSWORD',
+
+            'OAUTH_APP_ID',
+            'OAUTH_APP_PASSWORD',
+            'SMTP_HOST',
+        ],
+
+        '_POST' => [
+            'password',
+        ],
 
     ],
 

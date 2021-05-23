@@ -62,6 +62,10 @@ class TransactionService implements TransactionServiceInterface
      */
     public function performTransaction(array $data):bool
     {
+        if(data_get($data, 'payer') === data_get($data, 'payee')){
+            throw new TransactionException('Não é possível realizar transações para a conta de origem');
+        }
+
         $payer = $this->userRepository->findById(data_get($data, 'payer'));
         $payee = $this->userRepository->findById(data_get($data, 'payee'));
         $value = (float) data_get($data, 'value');
