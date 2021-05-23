@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('payer')->unsigned();
             $table->bigInteger('payee')->unsigned();
             $table->float('value');
+            $table->enum('status',['pending','denied','complete'])->default('pending');
             $table->timestamps();
 
             $table->foreign('payer')

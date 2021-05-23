@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string("fullname");
             $table->enum("type", ['common', 'shop']);
-            $table->string("identity")->unique();
+            $table->string("document")->unique();
             $table->string("email")->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

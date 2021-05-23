@@ -20,7 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'fullname',
         'type',
-        'identity',
+        'document',
         'email',
         'password',
     ];
@@ -43,4 +43,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function isShopAccount()
+    {
+        return $this->type === 'shop';
+    }
+
+    public function current_balance()
+    {
+        return $this->hasOne(Balance::class)->latest();
+    }
+
 }

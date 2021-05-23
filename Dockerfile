@@ -17,13 +17,14 @@ RUN apk --no-cache add --update \
     autoconf \
     g++ \
     make \
-     && rm -rf /var/cache/apk/*
+    && npm i -g pm2 \
+    && rm -rf /var/cache/apk/*
 
 RUN docker-php-ext-install pdo pdo_mysql curl bcmath
 
-#RUN pecl install -o -f redis \
-#    &&  rm -rf /tmp/pear \
-#    &&  docker-php-ext-enable redis
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
 
 WORKDIR /var/www
 
