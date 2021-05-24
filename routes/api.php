@@ -22,7 +22,7 @@ Route::group([
     Route::apiResource('users', UserController::class);
 
     Route::prefix('transactions')->group(function (){
-        Route::post('store', [TransactionController::class, 'store'])->name('transations.store');
+        Route::post('store', [TransactionController::class, 'store'])->name('transaction.store');
     });
 });
 

@@ -109,13 +109,13 @@ class TransactionService implements TransactionServiceInterface
 
             //New peyee balance
             $this->balanceRepository->store([
-                'value'   => (float) $payer->current_balance->value + (float) $transaction->value,
+                'value'   => (float) $payee->current_balance->value + (float) $transaction->value,
                 'user_id' => $payee->id
             ]);
 
             DB::commit();
 
-            $this->sendNotification($transaction);
+            ProcessTransationNotification::dispatch($transaction)->onQueue('notifications');
             return true;
         }catch (\Exception $e){
             Log::error($e->getMessage(). ' - '.$e->getFile().':'.$e->getLine());
@@ -153,13 +153,4 @@ class TransactionService implements TransactionServiceInterface
         return $output;
     }
 
-    /**
-     * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function sendNotification(Transaction $transaction):void
-    {
-        //Send notification to queue
-        ProcessTransationNotification::dispatch($transaction)->onQueue('notifications');
-    }
 }

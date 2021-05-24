@@ -72,7 +72,7 @@ class TransactionController extends Controller
         try {
             return new JsonResponse([
                 'created' => $this->transactionService->performTransaction($request->all())
-            ]);
+            ],201);
         }catch (NotFoundException $n){
             return new JsonResponse([
                 'error' => $n->getMessage()
@@ -83,7 +83,7 @@ class TransactionController extends Controller
             ],400);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }

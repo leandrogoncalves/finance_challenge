@@ -8,6 +8,7 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -93,7 +94,7 @@ class UserController extends Controller
             );
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }
@@ -134,9 +135,14 @@ class UserController extends Controller
             return new UserResource(
                 $this->userRepository->store($request->all())
             );
+
+        }catch (QueryException $e){
+            return new JsonResponse([
+                'error' => 'Os campos CPF ou Email já existem na base dados'
+            ], 400);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }
@@ -192,7 +198,7 @@ class UserController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }
@@ -253,7 +259,7 @@ class UserController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }
@@ -310,7 +316,7 @@ class UserController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return response()->json([
+            return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
             ], 500);
         }

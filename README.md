@@ -36,13 +36,13 @@ Desafio de produto financeiro
 1. Acesse a pasta do projeto: `cd finance_challenge`
 1. Execute os containers no Docker: `docker-compose up`
 1. Atribua permissão de execução no script de inicialização: `chmod +x ./scripts/startup.sh`
-1. Execute o script de inicialização: `./scripts/startup.sh`
+1. Execute o script de inicialização: `./scripts/setup.sh`
 
-## Execução
+## Documentação
 
 - Acesse http://localhost:8081/api/documentation
 
 ## Testes
 
 1. Acesse a pasta do projeto: `cd finance_challenge`
-1. Execute no terminal `php artisan test`
+1. Execute no terminal `docker exec -ti finance_challenge_app_1 bash -c "php artisan test"`
