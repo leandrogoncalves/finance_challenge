@@ -34,7 +34,7 @@ Desafio de produto financeiro
 
 1. Clone o repositório: `git clone git@github.com:leandrogoncalves/finance_challenge.git`
 1. Acesse a pasta do projeto: `cd finance_challenge`
-1. Execute os containers no Docker: `docker-compose up`
+1. Execute os containers no Docker: `docker-compose up -d`
 1. Atribua permissão de execução no script de inicialização: `chmod +x ./scripts/startup.sh`
 1. Execute o script de inicialização: `./scripts/setup.sh`
 
