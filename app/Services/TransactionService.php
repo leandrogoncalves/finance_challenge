@@ -70,7 +70,11 @@ class TransactionService implements TransactionServiceInterface
         $payee = $this->userRepository->findById(data_get($data, 'payee'));
         $value = (float) data_get($data, 'value');
 
-        if(!$payer->current_balance || $payer->current_balance->value <= 0){
+        if($value <= 0){
+            throw new TransactionException('O valor da transação precisa ser maior que zero');
+        }
+
+        if(!$payer->current_balance || $payer->current_balance->value <= 0 || $payer->current_balance->value < $value){
             throw new TransactionException('Saldo insuficiente');
         }
 
@@ -104,20 +108,26 @@ class TransactionService implements TransactionServiceInterface
             //New peyer balance
             $this->balanceRepository->store([
                 'value'   => (float) $payer->current_balance->value - (float) $transaction->value,
-                'user_id' => $payer->id
+                'user_id' => $payer->id,
+                'transaction_id' => $transaction->id
             ]);
 
             //New peyee balance
             $this->balanceRepository->store([
                 'value'   => (float) $payee->current_balance->value + (float) $transaction->value,
-                'user_id' => $payee->id
+                'user_id' => $payee->id,
+                'transaction_id' => $transaction->id
             ]);
+
+            $transaction->status = 'complete';
+            $transaction->save();
 
             DB::commit();
 
             ProcessTransationNotification::dispatch($transaction)->onQueue('notifications');
             return true;
         }catch (\Exception $e){
+            dd($e);
             Log::error($e->getMessage(). ' - '.$e->getFile().':'.$e->getLine());
             try{
                 DB::rollBack();

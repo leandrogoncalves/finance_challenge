@@ -17,5 +17,6 @@ class Balance extends Model
     protected $fillable = [
         'value',
         'user_id',
+        'transaction_id',
     ];
 }

@@ -38,9 +38,9 @@ class TransactionRequest extends FormRequest
     public function messages()
     {
         return [
-            'payer.required'   => 'O id da conta de origem é obrigatório',
-            'payee.required'   => 'O id da conta de destino é obrigatório',
-            'value.required'   => 'O valor é obrigatório',
+            'payer.required'   => 'O campo id da conta de origem (payer) é obrigatório',
+            'payee.required'   => 'O campo id da conta de destino (payee) é obrigatório',
+            'value.required'   => 'O campo valor é obrigatório',
         ];
     }
 }
