@@ -11,4 +11,5 @@ php artisan migrate;
 php artisan db:seed;
 php artisan l5-swagger:generate;
 php artisan test
+pm2 start queue-worker.pm2.yaml
 "
