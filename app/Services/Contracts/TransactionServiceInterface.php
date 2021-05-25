@@ -6,6 +6,10 @@ namespace App\Services\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Interface TransactionServiceInterface
+ * @package App\Services\Contracts
+ */
 interface TransactionServiceInterface
 {
     /**

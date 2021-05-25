@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Transaction;
+use App\Services\Contracts\NotificationServiceInterface;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -16,10 +17,8 @@ class ProcessTransationNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    const apiNotificationBaseUri = 'http://o4d9z.mocklab.io/';
-    const apiNotificationResourceUri = 'notify';
-
     protected $transaction;
+    protected $notificationService;
 
     /**
      * Create a new job instance.
@@ -28,6 +27,7 @@ class ProcessTransationNotification implements ShouldQueue
      */
     public function __construct(Transaction $transaction)
     {
+        $this->notificationService = app(NotificationServiceInterface::class);
         $this->transaction = $transaction;
     }
 
@@ -38,22 +38,6 @@ class ProcessTransationNotification implements ShouldQueue
      */
     public function handle()
     {
-        $output = false;
-
-        try{
-            $client = new Client(['base_uri' => self::apiNotificationBaseUri]);
-
-            $response = $client->get(self::apiNotificationResourceUri);
-            $states = json_decode($response->getBody()->getContents());
-
-            if(data_get($states, 'message') === 'Success'){
-                $output = true;
-            }
-
-        } catch (\Exception $e){
-            Log::error($e->getMessage());
-        }
-
-        return $output;
+        $this->notificationService->notifyTransaction($this->transaction);
     }
 }

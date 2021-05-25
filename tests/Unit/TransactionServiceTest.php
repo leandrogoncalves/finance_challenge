@@ -27,15 +27,4 @@ class TransactionServiceTest extends TestCase
         $this->assertTrue($isTransactionSuccessfull);
     }
 
-    /**
-     * Test of api method isAuthorized from transaction service
-     */
-    public function testApiAuthorizationTransaction()
-    {
-        $service = app(TransactionService::class);
-
-        $isTransactionAuthorized = $service->isAuthorized();
-
-        $this->assertTrue($isTransactionAuthorized);
-    }
 }

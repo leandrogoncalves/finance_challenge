@@ -8,7 +8,13 @@ use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
+use App\Services\BalanceService;
+use App\Services\Contracts\BalanceServiceInterface;
+use App\Services\Contracts\NotificationServiceInterface;
+use App\Services\Contracts\PaymentAuthorizationInterface;
 use App\Services\Contracts\TransactionServiceInterface;
+use App\Services\NotificationService;
+use App\Services\PaymentAutorizationService;
 use App\Services\TransactionService;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
         $this->app->bind(BalanceRepositoryInterface::class, BalanceRepository::class);
         $this->app->bind(TransactionServiceInterface::class, TransactionService::class);
+        $this->app->bind(PaymentAuthorizationInterface::class, PaymentAutorizationService::class);
+        $this->app->bind(BalanceServiceInterface::class, BalanceService::class);
+        $this->app->bind(NotificationServiceInterface::class, NotificationService::class);
     }
 
     /**

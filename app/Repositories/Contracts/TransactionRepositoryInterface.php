@@ -13,5 +13,5 @@ interface TransactionRepositoryInterface
      * @param int $id
      * @return Model
      */
-    public function store(array $data):Model;
+    public function store(array $data, int $id = null):Model;
 }

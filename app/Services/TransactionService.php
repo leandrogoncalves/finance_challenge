@@ -8,9 +8,12 @@ use App\Exceptions\TransactionException;
 use App\Jobs\ProcessTransationNotification;
 use App\Models\States;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Repositories\Contracts\BalanceRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Services\Contracts\BalanceServiceInterface;
+use App\Services\Contracts\PaymentAuthorizationInterface;
 use App\Services\Contracts\TransactionServiceInterface;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
@@ -22,21 +25,44 @@ use Illuminate\Support\Facades\Log;
  */
 class TransactionService implements TransactionServiceInterface
 {
-    const apiAuthorizationBaseUri = 'https://run.mocky.io/';
-    const apiAuthorizationResourceUri = 'v3/8fafdd68-a090-496f-8c9a-3442cf30dae6';
 
     /**
      * @var UserRepositoryInterface
      */
     protected $userRepository;
     /**
-     * @var BalanceRepositoryInterface
+     * @var BalanceServiceInterface
      */
-    protected $balanceRepository;
+    protected $balanceService;
     /**
      * @var TransactionRepositoryInterface
      */
     protected $transactionRepository;
+
+    /**
+     * @var PaymentAuthorizationInterface
+     */
+    protected $paymentAuthorizationService;
+
+    /**
+     * @var User
+     */
+    protected $payee;
+
+    /**
+     * @var User
+     */
+    protected $payer;
+
+    /**
+     * @var float
+     */
+    protected $transactionValue;
+
+    /**
+     * @var Transaction
+     */
+    protected $transaction;
 
     /**
      * TransactionService constructor.
@@ -46,13 +72,15 @@ class TransactionService implements TransactionServiceInterface
      */
     public function __construct(
         UserRepositoryInterface $userRepository,
-        BalanceRepositoryInterface $balanceRepository,
-        TransactionRepositoryInterface $transactionRepository
+        BalanceServiceInterface $balanceService,
+        TransactionRepositoryInterface $transactionRepository,
+        PaymentAuthorizationInterface $paymentAuthorization
     )
     {
         $this->userRepository = $userRepository;
-        $this->balanceRepository = $balanceRepository;
+        $this->balanceService = $balanceService;
         $this->transactionRepository = $transactionRepository;
+        $this->paymentAuthorizationService = $paymentAuthorization;
     }
 
 
@@ -66,68 +94,41 @@ class TransactionService implements TransactionServiceInterface
             throw new TransactionException('Não é possível realizar transações para a conta de origem');
         }
 
-        $payer = $this->userRepository->findById(data_get($data, 'payer'));
-        $payee = $this->userRepository->findById(data_get($data, 'payee'));
-        $value = (float) data_get($data, 'value');
+        $this->payer = $this->userRepository->findById(data_get($data, 'payer'));
+        $this->payee = $this->userRepository->findById(data_get($data, 'payee'));
+        $this->transactionValue = (float) data_get($data, 'value');
 
-        if($value <= 0){
-            throw new TransactionException('O valor da transação precisa ser maior que zero');
-        }
-
-        if(!$payer->current_balance || $payer->current_balance->value <= 0 || $payer->current_balance->value < $value){
-            throw new TransactionException('Saldo insuficiente');
-        }
-
-        if(!$payee->current_balance){
-            $this->balanceRepository->store([
-                'value'   => 0,
-                'user_id' => $payee->id
-            ]);
-        }
-
-        if($payer->isShopAccount()){
-            throw new TransactionException('A conta de logista não pode realizar transferências');
-        }
-
-        //New transaction pending
-        $transaction = $this->transactionRepository->store([
-            'payer' => $payer->id,
-            'payee' => $payee->id,
-            'value' => $value
-        ]);
-
-        if(!$this->isAuthorized()){
-            $transaction->status = 'denied';
-            $transaction->save();
-            throw new TransactionException('Transação negada');
-        }
+        $this->checkPositiveValue()
+            ->checkBalanceEnough()
+            ->checkPayerAccountType()
+            ->setTrasactionPending()
+            ->checkTransactionAuthorization();
 
         try {
             DB::beginTransaction();
 
             //New peyer balance
-            $this->balanceRepository->store([
-                'value'   => (float) $payer->current_balance->value - (float) $transaction->value,
-                'user_id' => $payer->id,
-                'transaction_id' => $transaction->id
-            ]);
+            $this->balanceService->create(
+                $this->transaction->id,
+                $this->payer->id,
+                (float) $this->payer->current_balance->value - (float) $this->transaction->value
+            );
 
             //New peyee balance
-            $this->balanceRepository->store([
-                'value'   => (float) $payee->current_balance->value + (float) $transaction->value,
-                'user_id' => $payee->id,
-                'transaction_id' => $transaction->id
-            ]);
+            $this->balanceService->create(
+                $this->transaction->id,
+                $this->payee->id,
+                (float) $this->payee->current_balance->value + (float) $this->transaction->value
+            );
 
-            $transaction->status = 'complete';
-            $transaction->save();
+            $this->setTransactionComplete();
 
             DB::commit();
 
-            ProcessTransationNotification::dispatch($transaction)->onQueue('notifications');
+            ProcessTransationNotification::dispatch($this->transaction)->onQueue('notifications');
+
             return true;
         }catch (\Exception $e){
-            dd($e);
             Log::error($e->getMessage(). ' - '.$e->getFile().':'.$e->getLine());
             try{
                 DB::rollBack();
@@ -139,28 +140,98 @@ class TransactionService implements TransactionServiceInterface
     }
 
     /**
-     * @return bool
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return $this|TransactionServiceInterface
+     * @throws TransactionException
      */
-    public function isAuthorized():bool
+    public function checkPositiveValue():TransactionServiceInterface
     {
-        $output = false;
-
-        try{
-            $client = new Client(['base_uri' => self::apiAuthorizationBaseUri]);
-
-            $response = $client->get(self::apiAuthorizationResourceUri);
-            $states = json_decode($response->getBody()->getContents());
-
-           if(data_get($states, 'message') === 'Autorizado'){
-                $output = true;
-           }
-
-        } catch (\Exception $e){
-            Log::error($e->getMessage());
+        if($this->transactionValue <= 0){
+            throw new TransactionException('O valor da transação precisa ser maior que zero');
         }
 
-        return $output;
+        return $this;
+    }
+
+    /**
+     * @return $this|TransactionServiceInterface
+     * @throws TransactionException
+     */
+    public function checkBalanceEnough():TransactionServiceInterface
+    {
+        if(!$this->payee->current_balance){
+            $this->balanceRepository->store([
+                'value'   => 0,
+                'user_id' => $this->payee->id
+            ]);
+        }
+
+        if(!$this->payer->current_balance
+            || $this->payer->current_balance->value <= 0
+            || $this->payer->current_balance->value < $this->transactionValue
+        ){
+            throw new TransactionException('Saldo insuficiente');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return TransactionServiceInterface
+     * @throws TransactionException
+     */
+    public function checkPayerAccountType():TransactionServiceInterface
+    {
+        if($this->payer->isShopAccount()){
+            throw new TransactionException('A conta de logista não pode realizar transferências');
+        }
+
+        return $this;
+    }
+
+    /**
+     * set Transaction Denied
+     */
+    public function setTransactionDenied():void
+    {
+        $this->transactionRepository->store([
+            'status' => 'denied'
+        ], $this->transaction->id);
+    }
+
+    /**
+     * @return $this|TransactionServiceInterface
+     */
+    public function setTrasactionPending():TransactionServiceInterface
+    {
+        //New transaction pending
+        $this->transaction = $this->transactionRepository->store([
+            'payer' => $this->payer->id,
+            'payee' => $this->payee->id,
+            'value' => $this->transactionValue
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * @throws TransactionException
+     */
+    public function checkTransactionAuthorization():void
+    {
+        if(!$this->paymentAuthorizationService->isAuthorized($this->transaction)){
+            $this->setTransactionDenied();
+            throw new TransactionException('Transação negada');
+        }
+    }
+
+    /**
+     * set Transaction Complete
+     */
+    public function setTransactionComplete():void
+    {
+        $this->transactionRepository->store([
+            'status' => 'complete'
+        ], $this->transaction->id);
     }
 
 }
