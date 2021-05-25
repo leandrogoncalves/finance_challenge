@@ -3,21 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
-use App\Http\Requests\UserRequest;
-use App\Http\Resources\UserCollection;
-use App\Http\Resources\UserResource;
+use App\Http\Requests\AccountRequest;
+use App\Http\Resources\AccountCollection;
+use App\Http\Resources\AccountResource;
+use App\Models\Account;
 use App\Models\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\AccountRepositoryInterface;
+use App\Services\AccountService;
+use App\Services\Contracts\AccountServiceInterface;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Class UserController
+ * Class AccountController
  * @package App\Http\Controllers
  */
-class UserController extends Controller
+class AccountController extends Controller
 {
 
     /**
@@ -41,38 +44,37 @@ class UserController extends Controller
 
      *
      * @OA\Tag(
-     *     name="Users",
-     *     description="API Endpoints of Users"
+     *     name="Accounts",
+     *     description="API Endpoints of Accounts"
      * )
      */
 
 
     /**
-     * @var UserRepositoryInterface
+     * @var AccountServiceInterface
      */
-    protected $userRepository;
+    protected $accountService;
 
     /**
-     * UserController constructor.
-     * @param UserRepositoryInterface $repository
+     * AccountController constructor.
+     * @param AccountRepositoryInterface $repository
      */
-    public function __construct(UserRepositoryInterface $repository)
+    public function __construct(AccountServiceInterface $accountService)
     {
-        $this->userRepository = $repository;
+        $this->accountService = $accountService;
     }
-
 
     /**
      * @OA\Get(
-     *      path="/api/v1/users",
-     *      operationId="getUsersList",
-     *      tags={"Users"},
-     *      summary="Get list of users",
-     *      description="Returns list of users",
+     *      path="/api/v1/accounts",
+     *      operationId="getAccountsList",
+     *      tags={"Accounts"},
+     *      summary="Get list of accounts",
+     *      description="Returns list of accounts",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/UserCollection")
+     *          @OA\JsonContent(ref="#/components/schemas/AccountCollection")
      *       ),
      *      @OA\Response(
      *          response=500,
@@ -89,8 +91,8 @@ class UserController extends Controller
     public function index()
     {
         try {
-            return new UserCollection(
-                $this->userRepository->findAllPaginated()
+            return new AccountCollection(
+                $this->accountService->findAllPaginated()
             );
         }catch (\Exception $e){
             Log::error($e->getMessage());
@@ -102,19 +104,19 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/api/v1/users",
-     *      operationId="storeUser",
-     *      tags={"Users"},
+     *      path="/api/v1/accounts",
+     *      operationId="storeAccount",
+     *      tags={"Accounts"},
      *      summary="Store new user",
      *      description="Returns user data",
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/UserRequest")
+     *          @OA\JsonContent(ref="#/components/schemas/AccountRequest")
      *      ),
      *      @OA\Response(
      *          response=201,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          @OA\JsonContent(ref="#/components/schemas/Account")
      *       ),
      *      @OA\Response(
      *          response=500,
@@ -126,20 +128,15 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\UserRequest  $request
+     * @param  \Illuminate\Http\AccountRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserRequest $request)
+    public function store(AccountRequest $request)
     {
         try {
-            return new UserResource(
-                $this->userRepository->store($request->all())
+            return new AccountResource(
+                $this->accountService->store($request->all())
             );
-
-        }catch (QueryException $e){
-            return new JsonResponse([
-                'error' => 'Os campos CPF ou Email já existem na base dados'
-            ], 400);
         }catch (\Exception $e){
             Log::error($e->getMessage());
             return new JsonResponse([
@@ -150,14 +147,14 @@ class UserController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/api/v1/users/{id}",
-     *      operationId="getUserById",
-     *      tags={"Users"},
+     *      path="/api/v1/accounts/{id}",
+     *      operationId="getAccountById",
+     *      tags={"Accounts"},
      *      summary="Get user information",
      *      description="Returns user data",
      *      @OA\Parameter(
      *          name="id",
-     *          description="User id",
+     *          description="Account id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -167,7 +164,7 @@ class UserController extends Controller
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          @OA\JsonContent(ref="#/components/schemas/Account")
      *       ),
      *      @OA\Response(
      *          response=404,
@@ -189,14 +186,15 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            return new UserResource(
-                $this->userRepository->findById($id)
+            return new AccountResource(
+                $this->accountService->findById($id)
             );
         }catch (NotFoundException $n){
             return new JsonResponse([
                 'error' => $n->getMessage()
             ], 404);
         }catch (\Exception $e){
+            dd($e);
             Log::error($e->getMessage());
             return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
@@ -206,14 +204,14 @@ class UserController extends Controller
 
     /**
      * @OA\Put(
-     *      path="/api/v1/users/{id}",
-     *      operationId="updateUsers",
-     *      tags={"Users"},
+     *      path="/api/v1/accounts/{id}",
+     *      operationId="updateAccounts",
+     *      tags={"Accounts"},
      *      summary="Update existing user",
      *      description="Returns updated user data",
      *      @OA\Parameter(
      *          name="id",
-     *          description="Users id",
+     *          description="Accounts id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -222,12 +220,12 @@ class UserController extends Controller
      *      ),
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/UserRequest")
+     *          @OA\JsonContent(ref="#/components/schemas/AccountRequest")
      *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *          @OA\JsonContent(ref="#/components/schemas/Account")
      *       ),
      *      @OA\Response(
      *          response=404,
@@ -247,11 +245,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
         try {
-            return new UserResource(
-                $this->userRepository->store($request->all(), $user->id)
+            return new AccountResource(
+                $this->accountService->store($request->all(), $id)
             );
         }catch (NotFoundException $n){
             return new JsonResponse([
@@ -268,14 +266,14 @@ class UserController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/api/v1/users/{id}",
-     *      operationId="deleteUser",
-     *      tags={"Users"},
+     *      path="/api/v1/accounts/{id}",
+     *      operationId="deleteAccount",
+     *      tags={"Accounts"},
      *      summary="Delete existing user",
      *      description="Deletes a record and returns content",
      *      @OA\Parameter(
      *          name="id",
-     *          description="User id",
+     *          description="Account id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -304,11 +302,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
         try {
             return new JsonResponse([
-                'removed' => $this->userRepository->delete($user->id)
+                'removed' => $this->accountService->delete($id)
             ]);
         }catch (NotFoundException $n){
             return new JsonResponse([

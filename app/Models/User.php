@@ -20,8 +20,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'fullname',
-        'type',
-        'document',
         'email',
         'password',
     ];
@@ -45,14 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function isShopAccount()
+    public function wallets()
     {
-        return $this->type === 'shop';
+        return $this->hasMany(Wallet::class);
     }
-
-    public function current_balance()
-    {
-        return $this->hasOne(Balance::class)->latest();
-    }
-
 }

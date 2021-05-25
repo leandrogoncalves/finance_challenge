@@ -9,12 +9,16 @@ use App\Repositories\Contracts\TransactionRepositoryInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class TransactionRepository
+ * @package App\Repositories
+ */
 class TransactionRepository implements TransactionRepositoryInterface
 {
     /**
      * @var Transaction
      */
-    private $model;
+    private $transaction;
 
     /**
      * TransactionRepository constructor.
@@ -22,12 +26,16 @@ class TransactionRepository implements TransactionRepositoryInterface
      */
     public function __construct(Transaction $transaction)
     {
-        $this->model = $transaction;
+        $this->transaction = $transaction;
     }
 
+    /**
+     * @param int $id
+     * @return Model
+     */
     public function findById(int $id):Model
     {
-        return $this->model::where('id', $id)->firstOrFail();
+        return $this->transaction::where('id', $id)->firstOrFail();
     }
 
     /**
@@ -38,11 +46,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function store(array $data, int $id = null):Model
     {
         if($id){
-            $this->model = $this->findById($id);
+            $this->transaction = $this->findById($id);
         }
 
-        $this->model->fill($data)->save();
-        return $this->model;
+        $this->transaction->fill($data)->save();
+        return $this->transaction;
     }
 
 }

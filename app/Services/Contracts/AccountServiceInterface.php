@@ -1,27 +1,18 @@
 <?php
 
 
-namespace App\Repositories\Contracts;
+namespace App\Services\Contracts;
 
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Interface RepositoryInterface
- * @package App\Repositories\Contracts
- */
-interface RepositoryInterface
+interface AccountServiceInterface
 {
     /**
      * @return Arrayable
      */
-    public function findAll():Arrayable;
-
-    /**
-     * @return mixed
-     */
-    public function findAllPaginated();
+    public function findAllPaginated():Arrayable;
 
     /**
      * @param int $id
@@ -41,5 +32,4 @@ interface RepositoryInterface
      * @return bool
      */
     public function delete(int $id):bool;
-
 }

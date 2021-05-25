@@ -16,15 +16,15 @@ class BalanceSeeder extends Seeder
     {
         collect([
             [
-                'user_id' => 1,
+                'wallet_id' => 1,
                 'value' => 1000,
             ],
             [
-                'user_id' => 2,
+                'wallet_id' => 2,
                 'value' => 2000,
             ],
             [
-                'user_id' => 3,
+                'wallet_id' => 3,
                 'value' => 3000,
             ],
         ])->each(function ($userStub){

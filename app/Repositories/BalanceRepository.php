@@ -8,12 +8,16 @@ use App\Models\Balance;
 use App\Repositories\Contracts\BalanceRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class BalanceRepository
+ * @package App\Repositories
+ */
 class BalanceRepository implements BalanceRepositoryInterface
 {
     /**
      * @var Balance
      */
-    private $model;
+    private $balance;
 
     /**
      * BalanceRepository constructor.
@@ -21,7 +25,7 @@ class BalanceRepository implements BalanceRepositoryInterface
      */
     public function __construct(Balance $balance)
     {
-        $this->model = $balance;
+        $this->balance = $balance;
     }
 
     /**

@@ -17,29 +17,23 @@ class UserSeeder extends Seeder
         collect([
             [
                 'fullname' => 'Shop account',
-                'type' => 'shop',
-                'document' => '43830574000108',
                 'email' => 'contact@shop.com',
                 'password' => bcrypt('secret')
             ],
             [
                 'fullname' => 'Common account 01',
-                'type' => 'common',
-                'document' => '63819531017',
                 'email' => 'account01@gmail.com',
                 'password' => bcrypt('secret')
             ],
             [
                 'fullname' => 'Common account 02',
-                'type' => 'common',
-                'document' => '60914716000',
                 'email' => 'account02@gmail.com',
                 'password' => bcrypt('secret')
             ],
         ])->each(function ($userStub){
             User::updateOrCreate(
                 [
-                    'document' => data_get($userStub, 'document')
+                    'email' => data_get($userStub, 'email')
                 ],
                 $userStub
             );

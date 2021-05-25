@@ -30,15 +30,15 @@ class BalanceService implements BalanceServiceInterface
 
     /**
      * @param int $transactionId
-     * @param int $userId
+     * @param int $walletId
      * @param float $value
      * @return Model
      */
-    public function create(int $transactionId,int $userId, float $value):Model
+    public function create(int $transactionId,int $walletId, float $value):Model
     {
         return $this->balanceRepository->store([
             'transaction_id' => $transactionId,
-            'user_id'        => $userId,
+            'wallet_id'      => $walletId,
             'value'          => $value
         ]);
     }

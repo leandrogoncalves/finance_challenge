@@ -16,7 +16,12 @@ class Balance extends Model
      */
     protected $fillable = [
         'value',
-        'user_id',
+        'wallet_id',
         'transaction_id',
     ];
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

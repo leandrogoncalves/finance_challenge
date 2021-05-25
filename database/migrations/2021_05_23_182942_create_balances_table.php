@@ -16,13 +16,13 @@ class CreateBalancesTable extends Migration
         Schema::create('balances', function (Blueprint $table) {
             $table->id();
             $table->float('value')->default(0)->unsigned();
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('wallet_id')->unsigned();
             $table->bigInteger('transaction_id')->unsigned()->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')
+            $table->foreign('wallet_id')
                 ->references('id')
-                ->on('users');
+                ->on('wallets');
 
             $table->foreign('transaction_id')
                 ->references('id')

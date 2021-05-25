@@ -6,14 +6,14 @@ namespace App\Virtual\Models;
 
 /**
  * @OA\Schema(
- *     title="User",
- *     description="User model",
+ *     title="Account",
+ *     description="Account model",
  *     @OA\Xml(
- *         name="User"
+ *         name="Account"
  *     )
  * )
  */
-class User
+class Account
 {
     /**
      * @OA\Property(
@@ -30,8 +30,8 @@ class User
     /**
      * @OA\Property(
      *      title="Name",
-     *      description="Name of the new User",
-     *      example="A nice User"
+     *      description="Name of the new Account",
+     *      example="A nice Account"
      * )
      *
      * @var string
@@ -42,7 +42,7 @@ class User
     /**
      * @OA\Property(
      *      title="Type",
-     *      description="Type of the User",
+     *      description="Type of the Account",
      *      example="common or shop"
      * )
      *
@@ -53,7 +53,7 @@ class User
     /**
      * @OA\Property(
      *      title="Document",
-     *      description="document of the User",
+     *      description="document of the Account",
      * )
      *
      * @var string
@@ -63,7 +63,7 @@ class User
     /**
      * @OA\Property(
      *      title="Email",
-     *      description="Email of the User",
+     *      description="Email of the Account",
      * )
      *
      * @var string
@@ -73,7 +73,7 @@ class User
     /**
      * @OA\Property(
      *      title="Password",
-     *      description="Password of the User",
+     *      description="Password of the Account",
      * )
      *
      * @var string

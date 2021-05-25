@@ -10,12 +10,16 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class UserRepository
+ * @package App\Repositories
+ */
 class UserRepository implements UserRepositoryInterface
 {
     /**
      * @var User
      */
-    private $model;
+    private $user;
 
     /**
      * UserRepository constructor.
@@ -23,34 +27,54 @@ class UserRepository implements UserRepositoryInterface
      */
     public function __construct(User $user)
     {
-        $this->model = $user;
+        $this->user = $user;
+    }
+
+    /**
+     * @return User
+     */
+    public function create()
+    {
+        return $this->user;
     }
 
     /**
      * @return Arrayable
      */
-    public function findAll():Arrayable
+    public function findAll(array $with = null):Arrayable
     {
-        return $this->model->with('current_balance')->get();
+        $queryBuilder = $this->user::query();
+        if($with){
+            $queryBuilder = $queryBuilder->with($with);
+        }
+        return $queryBuilder->get();
     }
 
     /**
      * @return mixed
      */
-    public function findAllPaginated()
+    public function findAllPaginated(array $with = null)
     {
-        return $this->model->with('current_balance')->paginate();
+        $queryBuilder = $this->user::query();
+        if($with){
+            $queryBuilder = $queryBuilder->with($with);
+        }
+        return $queryBuilder->paginate();
     }
 
     /**
      * @param $id
      * @return Model
      */
-    public function findById(int $id):Model
+    public function findById(int $id, array $with = null):Model
     {
-        $user = $this->model->with('current_balance')->find($id);
+        $queryBuilder = $this->user::query();
+        if($with){
+            $queryBuilder = $queryBuilder->with($with);
+        }
+        $user = $queryBuilder->find($id);
         if(!$user instanceof User){
-            throw new NotFoundException('Usuário não encontrado');
+            throw new NotFoundException('Conta não encontrada');
         }
         return $user;
     }
@@ -63,10 +87,10 @@ class UserRepository implements UserRepositoryInterface
     public function store(array $data, int $id = null):Model
     {
         if($id){
-            $this->model = $this->findById($id);
+            $this->user = $this->findById($id);
         }
-        $this->model->fill($data)->save();
-        return $this->model;
+        $this->user->fill($data)->save();
+        return $this->user;
     }
 
     /**
@@ -75,7 +99,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function delete(int $id):bool
     {
-        $this->model = $this->findById($id);
-        return $this->model->delete();
+        $this->user = $this->findById($id);
+        return $this->user->delete();
     }
 }

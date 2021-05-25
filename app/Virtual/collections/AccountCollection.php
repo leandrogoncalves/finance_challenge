@@ -6,14 +6,14 @@ namespace App\Virtual\collections;
 
 /**
  * @OA\Schema(
- *     title="UserCollection",
- *     description="User collection",
+ *     title="AccountCollection",
+ *     description="Account collection",
  *     @OA\Xml(
- *         name="UserCollection"
+ *         name="AccountCollection"
  *     )
  * )
  */
-class UserCollection
+class AccountCollection
 {
     /**
      * @OA\Property(
@@ -21,7 +21,7 @@ class UserCollection
      *     description="Data wrapper"
      * )
      *
-     * @var \App\Virtual\Models\User[]
+     * @var \App\Virtual\Models\Account[]
      */
     private $data;
 }

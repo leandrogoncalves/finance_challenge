@@ -6,9 +6,13 @@ use App\Repositories\BalanceRepository;
 use App\Repositories\Contracts\BalanceRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\WalletRepository;
+use App\Services\AccountService;
 use App\Services\BalanceService;
+use App\Services\Contracts\AccountServiceInterface;
 use App\Services\Contracts\BalanceServiceInterface;
 use App\Services\Contracts\NotificationServiceInterface;
 use App\Services\Contracts\PaymentAuthorizationInterface;
@@ -28,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(AccountServiceInterface::class, AccountService::class);
+        $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
         $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
         $this->app->bind(BalanceRepositoryInterface::class, BalanceRepository::class);
         $this->app->bind(TransactionServiceInterface::class, TransactionService::class);

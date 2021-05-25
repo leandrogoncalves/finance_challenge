@@ -5,19 +5,19 @@ namespace App\Virtual\Requests;
 
 /**
  * @OA\Schema(
- *      title="Store User request",
- *      description="Store User request body data",
+ *      title="Store Account request",
+ *      description="Store Account request body data",
  *      type="object",
  *      required={"name"}
  * )
  */
-class UserRequest
+class AccountRequest
 {
     /**
      * @OA\Property(
      *      title="name",
-     *      description="Name of the new User",
-     *      example="A nice User"
+     *      description="Name of the new Account",
+     *      example="A nice Account"
      * )
      *
      * @var string
@@ -27,7 +27,7 @@ class UserRequest
     /**
      * @OA\Property(
      *      title="type",
-     *      description="Type of User",
+     *      description="Type of Account",
      *      example="10"
      * )
      *

@@ -23,11 +23,11 @@ class CreateTransactionsTable extends Migration
 
             $table->foreign('payer')
                 ->references('id')
-                ->on('users');
+                ->on('wallets');
 
             $table->foreign('payee')
                 ->references('id')
-                ->on('users');
+                ->on('wallets');
         });
     }
 

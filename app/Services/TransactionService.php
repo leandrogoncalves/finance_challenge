@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Repositories\Contracts\BalanceRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\BalanceServiceInterface;
 use App\Services\Contracts\PaymentAuthorizationInterface;
 use App\Services\Contracts\TransactionServiceInterface;
@@ -29,7 +30,7 @@ class TransactionService implements TransactionServiceInterface
     /**
      * @var UserRepositoryInterface
      */
-    protected $userRepository;
+    protected $walletRepository;
     /**
      * @var BalanceServiceInterface
      */
@@ -66,18 +67,18 @@ class TransactionService implements TransactionServiceInterface
 
     /**
      * TransactionService constructor.
-     * @param UserRepositoryInterface $userRepository
+     * @param WalletRepositoryInterface $walletRepository
      * @param BalanceRepositoryInterface $balanceRepository
      * @param TransactionRepositoryInterface $transactionRepository
      */
     public function __construct(
-        UserRepositoryInterface $userRepository,
+        WalletRepositoryInterface $walletRepository,
         BalanceServiceInterface $balanceService,
         TransactionRepositoryInterface $transactionRepository,
         PaymentAuthorizationInterface $paymentAuthorization
     )
     {
-        $this->userRepository = $userRepository;
+        $this->walletRepository = $walletRepository;
         $this->balanceService = $balanceService;
         $this->transactionRepository = $transactionRepository;
         $this->paymentAuthorizationService = $paymentAuthorization;
@@ -94,8 +95,8 @@ class TransactionService implements TransactionServiceInterface
             throw new TransactionException('Não é possível realizar transações para a conta de origem');
         }
 
-        $this->payer = $this->userRepository->findById(data_get($data, 'payer'));
-        $this->payee = $this->userRepository->findById(data_get($data, 'payee'));
+        $this->payer = $this->walletRepository->findById(data_get($data, 'payer'));
+        $this->payee = $this->walletRepository->findById(data_get($data, 'payee'));
         $this->transactionValue = (float) data_get($data, 'value');
 
         $this->checkPositiveValue()

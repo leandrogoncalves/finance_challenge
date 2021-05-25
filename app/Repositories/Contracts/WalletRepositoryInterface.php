@@ -8,29 +8,17 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Interface UserRepositoryInterface
+ * Interface WalletRepositoryInterface
  * @package App\Repositories\Contracts
  */
-interface UserRepositoryInterface
+interface WalletRepositoryInterface
 {
-    /**
-     * @param array|null $with
-     * @return Arrayable
-     */
-    public function findAll(array $with = null):Arrayable;
-
-    /**
-     * @param array|null $with
-     * @return mixed
-     */
-    public function findAllPaginated(array $with = null);
 
     /**
      * @param int $id
-     * @param array|null $with
      * @return Model
      */
-    public function findById(int $id, array $with = null):Model;
+    public function findById(int $id):Model;
 
     /**
      * @param array $data
@@ -44,5 +32,4 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function delete(int $id):bool;
-
 }

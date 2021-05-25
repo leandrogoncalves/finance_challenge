@@ -5,14 +5,14 @@ namespace App\Virtual\Resources;
 
 /**
  * @OA\Schema(
- *     title="UserResource",
- *     description="User resource",
+ *     title="AccountResource",
+ *     description="Account resource",
  *     @OA\Xml(
- *         name="UserResource"
+ *         name="AccountResource"
  *     )
  * )
  */
-class UserResource
+class AccountResource
 {
     /**
      * @OA\Property(
@@ -20,7 +20,7 @@ class UserResource
      *     description="Data wrapper"
      * )
      *
-     * @var \App\Virtual\Models\User
+     * @var \App\Virtual\Models\Account
      */
     private $data;
 }
