@@ -19,7 +19,7 @@ class BalanceRepositoryTest extends TestCase
         $repository = app(BalanceRepository::class);
 
         $balance = $repository->store([
-            'user_id' => 3,
+            'wallet_id' => 3,
             'value' => 1500.20,
         ]);
 

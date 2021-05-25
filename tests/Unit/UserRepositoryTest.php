@@ -13,7 +13,7 @@ class UserRepositoryTest extends TestCase
     use DatabaseTransactions;
 
     /**
-     * Test of api method index from user repository
+     * Test of api method findAll from user repository
      */
     public function testGetAllUsersByRepository()
     {
@@ -25,7 +25,7 @@ class UserRepositoryTest extends TestCase
     }
 
     /**
-     * Test of api method index from user repository
+     * Test of api method store from user repository
      */
     public function testStoreUsersByRepository()
     {
@@ -33,8 +33,6 @@ class UserRepositoryTest extends TestCase
 
         $user = $repository->store([
             'fullname' => 'Common account 03',
-            'type' => 'common',
-            'document' => '63819531018',
             'email' => 'account03@gmail.com',
             'password' => bcrypt('secret')
         ]);
@@ -43,7 +41,7 @@ class UserRepositoryTest extends TestCase
     }
 
     /**
-     * Test of api method index from user repository
+     * Test of api method findById from user repository
      */
     public function testUsersGetByIdRepository()
     {
@@ -70,7 +68,7 @@ class UserRepositoryTest extends TestCase
     }
 
     /**
-     * Test of api method index from user repository
+     * Test of api method delete from user repository
      */
     public function testDeleteUsersByIdRepository()
     {

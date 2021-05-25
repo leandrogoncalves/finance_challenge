@@ -194,7 +194,6 @@ class AccountController extends Controller
                 'error' => $n->getMessage()
             ], 404);
         }catch (\Exception $e){
-            dd($e);
             Log::error($e->getMessage());
             return new JsonResponse([
                 'error' => 'Ocorreu um erro interno no servidor'
