@@ -68,8 +68,9 @@ class TransactionService implements TransactionServiceInterface
     /**
      * TransactionService constructor.
      * @param WalletRepositoryInterface $walletRepository
-     * @param BalanceRepositoryInterface $balanceRepository
+     * @param BalanceServiceInterface $balanceService
      * @param TransactionRepositoryInterface $transactionRepository
+     * @param PaymentAuthorizationInterface $paymentAuthorization
      */
     public function __construct(
         WalletRepositoryInterface $walletRepository,
@@ -144,7 +145,7 @@ class TransactionService implements TransactionServiceInterface
      * @return $this|TransactionServiceInterface
      * @throws TransactionException
      */
-    public function checkPositiveValue():TransactionServiceInterface
+    private function checkPositiveValue():TransactionServiceInterface
     {
         if($this->transactionValue <= 0){
             throw new TransactionException('O valor da transação precisa ser maior que zero');
@@ -157,7 +158,7 @@ class TransactionService implements TransactionServiceInterface
      * @return $this|TransactionServiceInterface
      * @throws TransactionException
      */
-    public function checkBalanceEnough():TransactionServiceInterface
+    private function checkBalanceEnough():TransactionServiceInterface
     {
         if(!$this->payee->current_balance){
             $this->balanceRepository->store([
@@ -180,7 +181,7 @@ class TransactionService implements TransactionServiceInterface
      * @return TransactionServiceInterface
      * @throws TransactionException
      */
-    public function checkPayerAccountType():TransactionServiceInterface
+    private function checkPayerAccountType():TransactionServiceInterface
     {
         if($this->payer->isShopAccount()){
             throw new TransactionException('A conta de logista não pode realizar transferências');
@@ -192,7 +193,7 @@ class TransactionService implements TransactionServiceInterface
     /**
      * set Transaction Denied
      */
-    public function setTransactionDenied():void
+    private function setTransactionDenied():void
     {
         $this->transactionRepository->store([
             'status' => 'denied'
@@ -202,7 +203,7 @@ class TransactionService implements TransactionServiceInterface
     /**
      * @return $this|TransactionServiceInterface
      */
-    public function setTrasactionPending():TransactionServiceInterface
+    private function setTrasactionPending():TransactionServiceInterface
     {
         //New transaction pending
         $this->transaction = $this->transactionRepository->store([
@@ -217,7 +218,7 @@ class TransactionService implements TransactionServiceInterface
     /**
      * @throws TransactionException
      */
-    public function checkTransactionAuthorization():void
+    private function checkTransactionAuthorization():void
     {
         if(!$this->paymentAuthorizationService->isAuthorized($this->transaction)){
             $this->setTransactionDenied();
@@ -228,7 +229,7 @@ class TransactionService implements TransactionServiceInterface
     /**
      * set Transaction Complete
      */
-    public function setTransactionComplete():void
+    private function setTransactionComplete():void
     {
         $this->transactionRepository->store([
             'status' => 'complete'

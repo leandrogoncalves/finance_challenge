@@ -114,7 +114,7 @@ class AccountService implements AccountServiceInterface
      * @param array $requestData
      * @return Model
      */
-    public function storeUserWallet(array $requestData):Model
+    protected function storeUserWallet(array $requestData):Model
     {
         $idWallet = null;
         $wallet = $this->user->wallet;
@@ -138,7 +138,7 @@ class AccountService implements AccountServiceInterface
      * @param array $requestData
      * @return Model
      */
-    public function storeShop(array $requestData):Model
+    protected function storeShop(array $requestData):Model
     {
         $shopName = data_get($requestData, 'shop_name', 'shop_'.Uuid::uuid4());
         data_set($requestData, 'name', $shopName);
@@ -158,7 +158,7 @@ class AccountService implements AccountServiceInterface
     /**
      * @param Shop $shop
      */
-    public function storeShopWallet(Shop $shop):void
+    protected function storeShopWallet(Shop $shop):void
     {
         $wallet = $shop->wallet;
         if(!$wallet){
