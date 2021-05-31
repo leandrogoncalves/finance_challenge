@@ -57,6 +57,7 @@ class WalletRepository implements WalletRepositoryInterface
      */
     public function store(array $data, int $id = null): Model
     {
+        $this->wallet = new Wallet();
         if($id){
             $this->wallet = $this->findById($id);
         }

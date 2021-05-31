@@ -4,11 +4,15 @@
 namespace App\Services;
 
 
+use App\Models\Shop;
+use App\Models\User;
+use App\Repositories\Contracts\ShopRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Contracts\WalletRepositoryInterface;
 use App\Services\Contracts\AccountServiceInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class AccountService
@@ -16,14 +20,41 @@ use Illuminate\Database\Eloquent\Model;
  */
 class AccountService implements AccountServiceInterface
 {
+    /**
+     * @var UserRepositoryInterface
+     */
     protected $userRespository;
 
+    /**
+     * @var WalletRepositoryInterface
+     */
     protected $walletRepository;
 
-    public function __construct(WalletRepositoryInterface $walletRepository, UserRepositoryInterface $userRepository)
+    /**
+     * @var ShopRepositoryInterface
+     */
+    protected $shopRepository;
+
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * AccountService constructor.
+     * @param WalletRepositoryInterface $walletRepository
+     * @param UserRepositoryInterface $userRepository
+     * @param ShopRepositoryInterface $shopRepository
+     */
+    public function __construct(
+        WalletRepositoryInterface $walletRepository,
+        UserRepositoryInterface $userRepository,
+        ShopRepositoryInterface $shopRepository
+    )
     {
         $this->walletRepository = $walletRepository;
         $this->userRespository = $userRepository;
+        $this->shopRepository = $shopRepository;
     }
 
     /**
@@ -31,7 +62,7 @@ class AccountService implements AccountServiceInterface
      */
     public function findAllPaginated(): Arrayable
     {
-        return $this->userRespository->findAllPaginated(['wallets.current_balance']);
+        return $this->userRespository->findAllPaginated(['wallet.current_balance', 'shops.wallet.current_balance']);
     }
 
     /**
@@ -41,39 +72,28 @@ class AccountService implements AccountServiceInterface
     public function findById(int $id): Model
     {
         return $this->userRespository->findById($id, [
-            'wallets.current_balance',
-            'wallets.inbound_transactions',
-            'wallets.outgoing_transactions'
+            'wallet.current_balance',
+            'wallet.inbound_transactions',
+            'wallet.outgoing_transactions',
+            'shops.wallet.current_balance'
         ]);
     }
 
     /**
-     * @param array $data
+     * @param array $requestData
      * @param int|null $id
      * @return Model
      */
-    public function store(array $data, int $id = null): Model
+    public function store(array $requestData, int $id = null): Model
     {
-        $document = data_get($data, 'document');
-        $user = $this->userRespository->create();
-        $wallet = null;
+        $cnpj = data_get($requestData, 'cnpj');
+        $this->user = $this->userRespository->store($requestData, $id);
 
-        if($id){
-           $user = $this->userRespository->findById($id, ['wallets']);
+        $this->storeUserWallet($requestData);
+        if($cnpj){
+            $this->storeShop($requestData);
         }
-
-        $user->fill($data)->save();
-
-        if($document){
-            $wallet = $user->wallets->where('document',$document)->first();
-            if(!$wallet){
-                $wallet = $this->walletRepository->create();
-            }
-            data_set($data, 'user_id', $user->id);
-            $wallet->fill($data)->save();
-        }
-
-        return $this->userRespository->findById($user->id, ['wallets']) ;
+        return $this->userRespository->findById($this->user->id, ['wallet','shops.wallet']) ;
     }
 
     /**
@@ -82,10 +102,72 @@ class AccountService implements AccountServiceInterface
      */
     public function delete(int $id): bool
     {
-        $user = $this->userRespository->findById($id, ['wallets']);
-        $user->wallets->each(function ($wallet){
-            $wallet->delete();
+        $user = $this->userRespository->findById($id, ['wallet']);
+        $user->shops->each(function ($shop){
+            $shop->wallet->delete();
+            $shop->delete();
         });
         return $user->delete();
+    }
+
+    /**
+     * @param array $requestData
+     * @return Model
+     */
+    public function storeUserWallet(array $requestData):Model
+    {
+        $idWallet = null;
+        $wallet = $this->user->wallet;
+        if($wallet){
+            return $this->walletRepository->store($requestData, $wallet->id);
+        }
+        data_set($requestData, 'type', 'common');
+
+        $wallet = $this->walletRepository->store([
+            'type' => 'common'
+        ]);
+
+        $this->userRespository->store([
+            'wallet_id' => $wallet->id
+        ], $this->user->id);
+
+        return $wallet;
+    }
+
+    /**
+     * @param array $requestData
+     * @return Model
+     */
+    public function storeShop(array $requestData):Model
+    {
+        $shopName = data_get($requestData, 'shop_name', 'shop_'.Uuid::uuid4());
+        data_set($requestData, 'name', $shopName);
+        $shopId = null;
+        $shop = $this->user->shop;
+        if($shop){
+            return $this->shopRepository->store($requestData, $shop->id);
+        }
+
+        data_set($requestData, 'user_id', $this->user->id);
+        $shop = $this->shopRepository->store($requestData);
+
+        $this->storeShopWallet($shop);
+        return $shop;
+    }
+
+    /**
+     * @param Shop $shop
+     */
+    public function storeShopWallet(Shop $shop):void
+    {
+        $wallet = $shop->wallet;
+        if(!$wallet){
+            $wallet = $this->walletRepository->store([
+                'type' => 'shop'
+            ]);
+            $this->shopRepository->store([
+                'wallet_id' => $wallet->id
+            ], $shop->id);
+        }
     }
 }

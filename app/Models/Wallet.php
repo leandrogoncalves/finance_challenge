@@ -12,13 +12,21 @@ class Wallet extends Model
 
     protected $fillable = [
         'type',
-        'document',
-        'user_id',
     ];
 
     public function isShopAccount()
     {
         return $this->type === 'shop';
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function shop()
+    {
+        $this->hasOne(Shop::class);
     }
 
     public function current_balance()

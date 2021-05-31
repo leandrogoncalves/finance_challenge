@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
-use App\Http\Requests\AccountRequest;
+use App\Http\Requests\AccountRequestCreate;
+use App\Http\Requests\AccountRequestUpdate;
 use App\Http\Resources\AccountCollection;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
@@ -96,10 +97,10 @@ class AccountController extends Controller
             );
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 
     /**
@@ -131,7 +132,7 @@ class AccountController extends Controller
      * @param  \Illuminate\Http\AccountRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(AccountRequest $request)
+    public function store(AccountRequestCreate $request)
     {
         try {
             return new AccountResource(
@@ -139,10 +140,11 @@ class AccountController extends Controller
             );
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 
     /**
@@ -195,10 +197,10 @@ class AccountController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 
     /**
@@ -240,11 +242,11 @@ class AccountController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  AccountRequestUpdate  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AccountRequestUpdate $request, $id)
     {
         try {
             return new AccountResource(
@@ -256,10 +258,10 @@ class AccountController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 
 
@@ -313,9 +315,9 @@ class AccountController extends Controller
             ], 404);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 }

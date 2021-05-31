@@ -20,8 +20,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'fullname',
+        'cpf',
         'email',
         'password',
+        'wallet_id',
     ];
 
     /**
@@ -43,8 +45,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function wallets()
+    public function wallet()
     {
-        return $this->hasMany(Wallet::class);
+        return $this->belongsTo(Wallet::class);
+    }
+
+    public function shops()
+    {
+        return $this->hasMany(Shop::class);
     }
 }

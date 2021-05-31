@@ -34,7 +34,7 @@ class AccountServiceTest extends TestCase
         $account = $service->store([
             'fullname' => 'Common account 03',
             "type" => "common",
-            "document" => "12345678905",
+            "cpf" => "12345678905",
             'email' => 'account03@gmail.com',
             'password' => bcrypt('secret')
         ]);

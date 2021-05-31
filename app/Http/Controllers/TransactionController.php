@@ -83,10 +83,10 @@ class TransactionController extends Controller
             ],400);
         }catch (\Exception $e){
             Log::error($e->getMessage());
-            return new JsonResponse([
-                'error' => 'Ocorreu um erro interno no servidor'
-            ], 500);
         }
+        return new JsonResponse([
+            'error' => 'Ocorreu um erro interno no servidor'
+        ], 500);
     }
 
 }

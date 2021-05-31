@@ -34,6 +34,7 @@ class UserRepositoryTest extends TestCase
         $user = $repository->store([
             'fullname' => 'Common account 03',
             'email' => 'account03@gmail.com',
+            'cpf' => '12345678909',
             'password' => bcrypt('secret')
         ]);
 

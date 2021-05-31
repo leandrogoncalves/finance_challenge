@@ -41,24 +41,35 @@ class Account
 
     /**
      * @OA\Property(
-     *      title="Type",
-     *      description="Type of the Account",
+     *      title="CPF",
+     *      description="Users CPF",
      *      example="common or shop"
      * )
      *
      * @var string
      */
-    public $type;
+    public $cpf;
 
     /**
      * @OA\Property(
-     *      title="Document",
-     *      description="document of the Account",
+     *      title="CNPJ",
+     *      description="Shops CNPJ",
+     *      example="common or shop"
      * )
      *
      * @var string
      */
-    public $document;
+    public $cnpj;
+
+    /**
+     * @OA\Property(
+     *      title="shop name",
+     *      description="shop name",
+     * )
+     *
+     * @var string
+     */
+    public $shop_name;
 
     /**
      * @OA\Property(

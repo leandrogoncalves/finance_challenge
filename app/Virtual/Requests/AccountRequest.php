@@ -13,9 +13,10 @@ namespace App\Virtual\Requests;
  */
 class AccountRequest
 {
+
     /**
      * @OA\Property(
-     *      title="name",
+     *      title="Name",
      *      description="Name of the new Account",
      *      example="A nice Account"
      * )
@@ -24,14 +25,56 @@ class AccountRequest
      */
     public $fullname;
 
+
     /**
      * @OA\Property(
-     *      title="type",
-     *      description="Type of Account",
-     *      example="10"
+     *      title="CPF",
+     *      description="Users CPF",
+     *      example="common or shop"
      * )
      *
      * @var string
      */
-    public $type;
+    public $cpf;
+
+    /**
+     * @OA\Property(
+     *      title="CNPJ",
+     *      description="Shops CNPJ",
+     *      example="common or shop"
+     * )
+     *
+     * @var string
+     */
+    public $cnpj;
+
+    /**
+     * @OA\Property(
+     *      title="shop name",
+     *      description="shop name",
+     * )
+     *
+     * @var string
+     */
+    public $shop_name;
+
+    /**
+     * @OA\Property(
+     *      title="Email",
+     *      description="Email of the Account",
+     * )
+     *
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @OA\Property(
+     *      title="Password",
+     *      description="Password of the Account",
+     * )
+     *
+     * @var string
+     */
+    public $password;
 }

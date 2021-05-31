@@ -252,15 +252,21 @@
                         "type": "string",
                         "example": "A nice Account"
                     },
-                    "type": {
-                        "title": "Type",
-                        "description": "Type of the Account",
+                    "cpf": {
+                        "title": "CPF",
+                        "description": "Users CPF",
                         "type": "string",
                         "example": "common or shop"
                     },
-                    "document": {
-                        "title": "Document",
-                        "description": "document of the Account",
+                    "cnpj": {
+                        "title": "CNPJ",
+                        "description": "Shops CNPJ",
+                        "type": "string",
+                        "example": "common or shop"
+                    },
+                    "shop_name": {
+                        "title": "shop name",
+                        "description": "shop name",
                         "type": "string"
                     },
                     "email": {
@@ -361,16 +367,37 @@
                 ],
                 "properties": {
                     "fullname": {
-                        "title": "name",
+                        "title": "Name",
                         "description": "Name of the new Account",
                         "type": "string",
                         "example": "A nice Account"
                     },
-                    "type": {
-                        "title": "type",
-                        "description": "Type of Account",
+                    "cpf": {
+                        "title": "CPF",
+                        "description": "Users CPF",
                         "type": "string",
-                        "example": "10"
+                        "example": "common or shop"
+                    },
+                    "cnpj": {
+                        "title": "CNPJ",
+                        "description": "Shops CNPJ",
+                        "type": "string",
+                        "example": "common or shop"
+                    },
+                    "shop_name": {
+                        "title": "shop name",
+                        "description": "shop name",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email of the Account",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password of the Account",
+                        "type": "string"
                     }
                 },
                 "type": "object"

@@ -27,7 +27,8 @@ class AccountApiFeatureTest extends TestCase
                         'created_at',
                         'updated_at',
                         'deleted_at',
-                        'wallets'
+                        'wallet',
+                        'shops'
                     ]
                 ]
             ]);
@@ -42,7 +43,7 @@ class AccountApiFeatureTest extends TestCase
         $response = $this->post(route('api.accounts.store'),[
             'fullname' => 'Common account 05',
             'type' => 'common',
-            'document' => '63819531019',
+            'cpf' => '63819531019',
             'email' => 'account05@gmail.com',
             'password' => bcrypt('secret')
         ]);
@@ -57,7 +58,8 @@ class AccountApiFeatureTest extends TestCase
                     'created_at',
                     'updated_at',
                     'deleted_at',
-                    'wallets'
+                    'wallet',
+                    'shops'
                 ]
             ]);
 
@@ -80,7 +82,8 @@ class AccountApiFeatureTest extends TestCase
                     'created_at',
                     'updated_at',
                     'deleted_at',
-                    'wallets'
+                    'wallet',
+                    'shops'
                 ]
             ]);
 
@@ -106,7 +109,8 @@ class AccountApiFeatureTest extends TestCase
                     'created_at',
                     'updated_at',
                     'deleted_at',
-                    'wallets'
+                    'wallet',
+                    'shops'
                 ]
             ]);
 

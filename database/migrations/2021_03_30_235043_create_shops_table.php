@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWalletsTable extends Migration
+class CreateShopsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,22 @@ class CreateWalletsTable extends Migration
      */
     public function up()
     {
-        Schema::create('wallets', function (Blueprint $table) {
+        Schema::create('shops', function (Blueprint $table) {
             $table->id();
-            $table->enum("type", ['common', 'shop']);
-            $table->string("document")->unique();
+            $table->string('name');
+            $table->string('cnpj')->unique();
             $table->bigInteger("user_id")->unsigned();
+            $table->bigInteger('wallet_id')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users');
+
+            $table->foreign('wallet_id')
+                ->references('id')
+                ->on('wallets');
         });
     }
 
@@ -34,6 +39,6 @@ class CreateWalletsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wallets');
+        Schema::dropIfExists('shops');
     }
 }

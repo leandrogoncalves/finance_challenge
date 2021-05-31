@@ -27,6 +27,10 @@ class BalanceSeeder extends Seeder
                 'wallet_id' => 3,
                 'value' => 3000,
             ],
+            [
+                'wallet_id' => 4,
+                'value' => 4000,
+            ],
         ])->each(function ($userStub){
             Balance::updateOrCreate($userStub);
         });
