@@ -20,11 +20,11 @@ services:
     volumes:
       - "./.docker/dbdata:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_USER: admin
-      MYSQL_ROOT_PASSWORD: P@sswd!@Root
-      MYSQL_DATABASE: finance_challenge
-      MYSQL_USER: finance_challenge
-      MYSQL_PASSWORD: P@sswd!@User
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - network
 
@@ -45,7 +45,7 @@ services:
   redis:
     image: redis
     environment:
-      - REDIS_PASSWORD=P@ssWd!@#10
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     expose:
       - "6379"
     ports:
