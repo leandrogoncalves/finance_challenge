@@ -100,6 +100,22 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        /**
+         * Docs by http://constituteweb.com/store-laravel-log-events-to-sql-or-mongodb
+         */
+        'mongodb' => [
+            'driver' => 'custom',
+            'via' => \Modules\Seguranca\Services\Logs\LogMongoDb::class,
+//	        'via' => danielme85\LaravelLogToDB\LogToDbHandler::class,
+            'level' => 'debug',
+            'connection' => 'mongodb',
+            'collection' => 'log',
+            'detailed' => true,
+            'queue' => false,
+            'queue_name' => 'logQueue',
+            'queue_connection' => ''
+        ],
     ],
 
 ];

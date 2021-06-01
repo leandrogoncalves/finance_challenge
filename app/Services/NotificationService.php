@@ -26,6 +26,7 @@ class NotificationService implements NotificationServiceInterface
 
             if(data_get($states, 'message') === 'Success'){
                 $output = true;
+                Log::info('User notified');
             }
 
         } catch (\Exception $e){
